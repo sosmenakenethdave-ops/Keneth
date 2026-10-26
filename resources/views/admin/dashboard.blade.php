@@ -8,7 +8,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
                     </svg>
                 </span>
-                <!-- Inayos ang kulay katulad ng CICT PORTAL branding (White & Blue) -->
                 <h2 class="font-extrabold text-2xl tracking-wide flex items-center space-x-1">
                     <span class="text-white">CICT</span>
                     <span class="text-blue-500">Scheduling Dashboard</span>
@@ -38,7 +37,6 @@
                      class="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-1 overflow-hidden"
                      style="display: none;">
                     
-                    <!-- Choice 1: How to Use -->
                     <button @click="showGuide = true; openHelp = false" class="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center space-x-2.5 transition">
                         <span>📖</span>
                         <span class="font-medium">How to Use System</span>
@@ -46,7 +44,6 @@
 
                     <div class="border-t border-slate-100"></div>
 
-                    <!-- Choice 2: About -->
                     <button @click="showAbout = true; openHelp = false" class="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center space-x-2.5 transition">
                         <span>ℹ️</span>
                         <span class="font-medium">About</span>
@@ -54,7 +51,7 @@
                 </div>
             </div>
 
-            <!-- MODAL 1: ABOUT POPUP (Centered & Full Blurred Screen Backdrop) -->
+            <!-- MODAL 1: ABOUT POPUP -->
             <template x-teleport="body">
                 <div x-show="showAbout" 
                      x-transition:enter="transition ease-out duration-200"
@@ -77,7 +74,6 @@
                          @click.away="showAbout = false"
                          class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 my-auto">
                         
-                        <!-- Title Header -->
                         <div class="bg-blue-600 px-5 py-3.5 flex items-center justify-between text-white font-bold text-lg">
                             <span>About</span>
                             <button @click="showAbout = false" class="text-white/80 hover:text-white transition">
@@ -87,17 +83,13 @@
                             </button>
                         </div>
                         
-                        <!-- Modal Content -->
                         <div class="p-6">
                             <div class="flex items-start space-x-4">
-                                <!-- Info Icon -->
                                 <div class="flex-shrink-0">
                                     <div class="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center text-white font-extrabold text-3xl shadow-md border-2 border-blue-400">
                                         i
                                     </div>
                                 </div>
-                                
-                                <!-- Information Details -->
                                 <div class="space-y-1.5 text-slate-900">
                                     <h3 class="text-xl font-bold text-blue-800">CICT Scheduling System v1.0.0</h3>
                                     <p class="text-sm font-semibold text-slate-800">Copyright © 2026 CICT Portal</p>
@@ -108,7 +100,6 @@
                                 </div>
                             </div>
 
-                            <!-- Action OK Button -->
                             <div class="mt-6 flex justify-center">
                                 <button @click="showAbout = false" class="px-8 py-2 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full shadow-md transition text-sm">
                                     OK
@@ -119,7 +110,7 @@
                 </div>
             </template>
 
-            <!-- MODAL 2: HOW TO USE POPUP (Centered & Full Blurred Screen Backdrop) -->
+            <!-- MODAL 2: HOW TO USE POPUP -->
             <template x-teleport="body">
                 <div x-show="showGuide" 
                      x-transition:enter="transition ease-out duration-200"
@@ -141,7 +132,130 @@
                          x-transition:leave-end="opacity-0 scale-95"
                          @click.away="showGuide = false"
                          class="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden border border-slate-200 my-auto">
-                        
+                        <!-- Curriculum Display Section (Separated for IT and CS) -->
+<div class="mt-8 bg-white border border-slate-200/80 rounded-2xl shadow-md p-6">
+    <div class="border-b border-slate-100 pb-4 mb-6">
+        <h3 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+            <!-- CURRICULUM SUBJECTS DISPLAY (SEPARATED FOR IT AND CS) -->
+            <div class="bg-white border border-slate-200/80 rounded-2xl shadow-md p-6">
+                <div class="border-b border-slate-100 pb-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+                            <span>🎓</span>
+                            <span>CICT Academic Curriculums</span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1">Listahan ng lahat ng asignaturang nakapaloob sa BSIT at BSCS programs.</p>
+                    </div>
+                </div>
+
+                <!-- Alpine.js Tabs state -->
+                <div x-data="{ courseTab: 'IT' }" class="space-y-6">
+                    <!-- Course Switch Buttons -->
+                    <div class="flex border-b border-slate-200 space-x-2 pb-3">
+                        <button @click="courseTab = 'IT'" 
+                                :class="courseTab === 'IT' ? 'bg-blue-600 text-white shadow-md border-blue-600' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-200'"
+                                class="px-5 py-2.5 rounded-xl font-bold text-sm border transition flex items-center space-x-2">
+                            <span>💻</span>
+                            <span>BS Information Technology (BSIT)</span>
+                        </button>
+                        <button @click="courseTab = 'CS'" 
+                                :class="courseTab === 'CS' ? 'bg-indigo-600 text-white shadow-md border-indigo-600' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-200'"
+                                class="px-5 py-2.5 rounded-xl font-bold text-sm border transition flex items-center space-x-2">
+                            <span>🖥️</span>
+                            <span>BS Computer Science (BSCS)</span>
+                        </button>
+                    </div>
+
+                    <!-- BSIT CURRICULUM TAB -->
+                    <div x-show="courseTab === 'IT'" class="space-y-6">
+                        @php
+                            $itGrouped = isset($itSubjects) ? $itSubjects->groupBy(['year', 'semester']) : collect();
+                        @endphp
+
+                        @if($itGrouped->isNotEmpty())
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                @foreach($itGrouped as $year => $semesters)
+                                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm">
+                                        <div class="bg-blue-600 text-white font-extrabold px-3.5 py-1.5 rounded-xl text-xs inline-block mb-3 uppercase tracking-wider">
+                                            Year Level {{ $year }}
+                                        </div>
+
+                                        @foreach($semesters as $semester => $subjects)
+                                            <div class="mb-4 last:mb-0">
+                                                <h5 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 border-b border-slate-200 pb-1">
+                                                    {{ $semester == 1 ? '1st Semester' : '2nd Semester' }}
+                                                </h5>
+                                                <div class="space-y-1.5">
+                                                    @foreach($subjects as $sub)
+                                                        <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between text-xs hover:border-blue-300 transition">
+                                                            <div class="pr-2">
+                                                                <span class="font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">{{ $sub->code }}</span>
+                                                                <span class="text-slate-800 font-medium ml-1.5">{{ $sub->title }}</span>
+                                                            </div>
+                                                            <span class="flex-shrink-0 bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-md text-[10px] border border-slate-200">
+                                                                {{ $sub->units }} Units
+                                                            </span>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="p-8 text-center text-slate-400 italic bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                                Walang nahanap na IT subjects.
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- BSCS CURRICULUM TAB -->
+                    <div x-show="courseTab === 'CS'" class="space-y-6" style="display: none;">
+                        @php
+                            $csGrouped = isset($csSubjects) ? $csSubjects->groupBy(['year', 'semester']) : collect();
+                        @endphp
+
+                        @if($csGrouped->isNotEmpty())
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                @foreach($csGrouped as $year => $semesters)
+                                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm">
+                                        <div class="bg-indigo-600 text-white font-extrabold px-3.5 py-1.5 rounded-xl text-xs inline-block mb-3 uppercase tracking-wider">
+                                            Year Level {{ $year }}
+                                        </div>
+
+                                        @foreach($semesters as $semester => $subjects)
+                                            <div class="mb-4 last:mb-0">
+                                                <h5 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 border-b border-slate-200 pb-1">
+                                                    {{ $semester == 1 ? '1st Semester' : '2nd Semester' }}
+                                                </h5>
+                                                <div class="space-y-1.5">
+                                                    @foreach($subjects as $sub)
+                                                        <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between text-xs hover:border-indigo-300 transition">
+                                                            <div class="pr-2">
+                                                                <span class="font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">{{ $sub->code }}</span>
+                                                                <span class="text-slate-800 font-medium ml-1.5">{{ $sub->title }}</span>
+                                                            </div>
+                                                            <span class="flex-shrink-0 bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-md text-[10px] border border-slate-200">
+                                                                {{ $sub->units }} Units
+                                                            </span>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="p-8 text-center text-slate-400 italic bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                                Walang nahanap na CS subjects.
+                            </div>
+                        @endif
+                    </div>
+
+                </div>
+            </div>
                         <div class="bg-blue-600 px-6 py-4 flex items-center justify-between text-white font-bold text-lg">
                             <div class="flex items-center space-x-2">
                                 <span>📖</span>
@@ -221,7 +335,7 @@
 
             <!-- Live Weather Dashboard Card -->
             <div class="bg-white border border-slate-200/80 rounded-2xl shadow-md p-6">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-100 pb-4 mb-4 gap-4">
                     <div class="flex items-center space-x-3">
                         <div class="p-2.5 bg-sky-50 text-sky-600 rounded-xl border border-sky-100">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,48 +347,63 @@
                             <p class="text-xs text-slate-500">Current real-time weather update</p>
                         </div>
                     </div>
-                    @if(isset($weatherData) && $weatherData)
-                        <span class="px-3 py-1 bg-sky-50 text-sky-700 border border-sky-200 rounded-full text-xs font-bold">
-                            📍 {{ $weatherData['city'] }}
-                        </span>
-                    @endif
-                </div>
 
-                @if(isset($weatherData) && $weatherData)
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                        <!-- Temp & Condition -->
-                        <div class="flex items-center space-x-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                            @if($weatherData['icon'])
-                                <img src="https://openweathermap.org/img/wn/{{ $weatherData['icon'] }}@2x.png" alt="Weather Icon" class="w-12 h-12">
-                            @endif
-                            <div>
-                                <span class="text-2xl font-extrabold text-slate-900">{{ $weatherData['temperature'] }}°C</span>
-                                <p class="text-slate-500 text-xs font-medium capitalize">{{ $weatherData['condition'] }}</p>
+                    <!-- Search Weather Input & Dropdown Container -->
+                    <div class="flex flex-wrap items-center space-x-2 w-full sm:w-auto relative">
+                        <!-- Use As Default Location Button -->
+                        <button id="useLocationBtn" onclick="saveAsDefaultLocation()" class="hidden px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition flex items-center space-x-1 shadow-md">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Use as Default Location</span>
+                        </button>
+
+                        <div class="relative flex-1 sm:flex-initial">
+                            <div class="flex items-center space-x-1.5">
+                                <input type="text" id="citySearchInput" placeholder="I-search ang lugar..." class="px-3 py-1.5 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-56" autocomplete="off">
+                                <button id="citySearchBtn" onclick="handleSearch()" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition shadow-sm">
+                                    Search
+                                </button>
+                            </div>
+
+                            <!-- [NAIDAGDAG] Search Auto-complete Suggestions Dropdown -->
+                            <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden max-h-56 overflow-y-auto">
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Details Grid -->
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                            <span class="text-xs text-slate-500 font-semibold block mb-1">📍 Location</span>
-                            <span class="font-bold text-slate-900 text-sm">{{ $weatherData['city'] }}</span>
-                        </div>
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                            <span class="text-xs text-slate-500 font-semibold block mb-1">💧 Humidity</span>
-                            <span class="font-bold text-slate-900 text-sm">{{ $weatherData['humidity'] }}%</span>
-                        </div>
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                            <span class="text-xs text-slate-500 font-semibold block mb-1">💨 Wind Speed</span>
-                            <span class="font-bold text-slate-900 text-sm">{{ $weatherData['wind_speed'] }} m/s</span>
+                <!-- Status / Notification Message Container -->
+                <div id="weatherStatusMessage" class="hidden mb-4 p-3 rounded-xl text-xs font-medium"></div>
+
+                <!-- Weather Info Display Grid -->
+                <div id="weatherDisplayGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-center">
+                    <!-- Temp & Condition -->
+                    <div class="flex items-center space-x-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <span id="weatherEmoji" class="text-3xl">🌤️</span>
+                        <div>
+                            <span id="weatherTemp" class="text-2xl font-extrabold text-slate-900">--°C</span>
+                            <p id="weatherCondition" class="text-slate-500 text-xs font-medium capitalize">Wala pang lugar</p>
                         </div>
                     </div>
-                @else
-                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm flex items-center space-x-3">
-                        <svg class="w-5 h-5 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                        </svg>
-                        <span class="font-medium">⚠️ {{ $weatherError ?? 'Weather information is currently unavailable.' }}</span>
+
+                    <!-- Details Grid -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <span class="text-xs text-slate-500 font-semibold block mb-1">📍 Location</span>
+                        <div class="flex items-center space-x-2">
+                            <span id="weatherCity" class="font-bold text-slate-900 text-sm">--</span>
+                            <span id="defaultBadge" class="hidden px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-extrabold rounded-full">DEFAULT</span>
+                        </div>
                     </div>
-                @endif
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <span class="text-xs text-slate-500 font-semibold block mb-1">💧 Humidity</span>
+                        <span id="weatherHumidity" class="font-bold text-slate-900 text-sm">--%</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <span class="text-xs text-slate-500 font-semibold block mb-1">💨 Wind Speed</span>
+                        <span id="weatherWind" class="font-bold text-slate-900 text-sm">-- m/s</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Main Portal Management Sections Grid -->
@@ -340,4 +469,193 @@
             </div>
         </div>
     </div>
+
+    <!-- JavaScript Weather Logic na may Live Search Autocomplete -->
+    <script>
+        let currentLoadedCity = '';
+        let typingDebounceTimer;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedDefaultCity = localStorage.getItem('cict_default_weather_city');
+            
+            if (savedDefaultCity) {
+                getWeatherByCityName(savedDefaultCity);
+            } else {
+                getWeatherByCityName(''); // Kunin ang default mula sa .env (Arakan)
+            }
+
+            // Event listener para sa Enter key sa search input
+            document.getElementById('citySearchInput')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const dropdown = document.getElementById('searchResultsDropdown');
+                    if (dropdown) dropdown.classList.add('hidden');
+                    handleSearch();
+                }
+            });
+
+            // Live typing handler para lumabas ang autocomplete
+            document.getElementById('citySearchInput')?.addEventListener('input', (e) => {
+                handleTyping(e.target.value);
+            });
+
+            // Isara ang suggestion dropdown kapag nag-click sa labas
+            document.addEventListener('click', (e) => {
+                const dropdown = document.getElementById('searchResultsDropdown');
+                const input = document.getElementById('citySearchInput');
+                if (dropdown && !dropdown.contains(e.target) && e.target !== input) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        });
+
+        // Live Auto-complete Typing Handler
+        function handleTyping(query) {
+            clearTimeout(typingDebounceTimer);
+            const dropdown = document.getElementById('searchResultsDropdown');
+
+            if (!query || query.trim().length < 2) {
+                if (dropdown) dropdown.classList.add('hidden');
+                return;
+            }
+
+            typingDebounceTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/api/weather/search?q=${encodeURIComponent(query.trim())}`);
+                    const places = await res.json();
+
+                    if (Array.isArray(places) && places.length > 0) {
+                        dropdown.innerHTML = '';
+                        places.forEach(place => {
+                            const state = place.state ? `, ${place.state}` : '';
+                            const country = place.country ? `, ${place.country}` : '';
+                            const fullName = `${place.name}${state}${country}`;
+
+                            const item = document.createElement('div');
+                            item.className = 'px-3 py-2 text-xs text-slate-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer border-b border-slate-100 last:border-0 font-medium flex items-center justify-between';
+                            item.innerHTML = `<span>📍 ${fullName}</span><span class="text-[10px] text-slate-400">Piliin</span>`;
+                            
+                            item.onclick = () => {
+                                document.getElementById('citySearchInput').value = place.name;
+                                dropdown.classList.add('hidden');
+                                getWeatherByCityName(place.name);
+                            };
+                            dropdown.appendChild(item);
+                        });
+                        dropdown.classList.remove('hidden');
+                    } else {
+                        dropdown.innerHTML = `<div class="px-3 py-2 text-xs text-slate-400 italic">Walang nahanap na lugar na "${query}"</div>`;
+                        dropdown.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            }, 300);
+        }
+
+        function handleSearch() {
+            const dropdown = document.getElementById('searchResultsDropdown');
+            if (dropdown) dropdown.classList.add('hidden');
+
+            const query = document.getElementById('citySearchInput').value.trim();
+            if (query) {
+                getWeatherByCityName(query);
+            }
+        }
+
+        async function getWeatherByCityName(cityName) {
+            showStatus('Hinahanap ang datos ng panahon...', 'info');
+
+            try {
+                const res = await fetch(`/api/weather?city=${encodeURIComponent(cityName)}`);
+                const data = await res.json();
+
+                if (res.ok && data.main) {
+                    currentLoadedCity = data.name;
+
+                    document.getElementById('weatherCity').innerText = `${data.name}, ${data.sys.country}`;
+                    document.getElementById('weatherTemp').innerText = `${Math.round(data.main.temp)}°C`;
+                    document.getElementById('weatherHumidity').innerText = `${data.main.humidity}%`;
+                    document.getElementById('weatherWind').innerText = `${data.wind.speed} m/s`;
+                    
+                    const condition = data.weather[0].main;
+                    const desc = data.weather[0].description;
+                    const weatherInfo = parseOpenWeatherCondition(condition);
+
+                    document.getElementById('weatherCondition').innerText = desc;
+                    document.getElementById('weatherEmoji').innerText = weatherInfo.emoji;
+
+                    checkIfDefaultLocation();
+                    hideStatus();
+                } else {
+                    showStatus(data.error || 'Hindi nahanap ang lugar. Paki-check ang spelling.', 'error');
+                }
+            } catch (error) {
+                console.error(error);
+                showStatus('Nagka-error sa pag-fetch ng weather data.', 'error');
+            }
+        }
+
+        function saveAsDefaultLocation() {
+            if (currentLoadedCity) {
+                localStorage.setItem('cict_default_weather_city', currentLoadedCity);
+                checkIfDefaultLocation();
+                showStatus(`Naitakda na ang "${currentLoadedCity}" bilang iyong permanenteng default location!`, 'info');
+                setTimeout(hideStatus, 3000);
+            }
+        }
+
+        function checkIfDefaultLocation() {
+            const savedDefault = localStorage.getItem('cict_default_weather_city');
+            const useBtn = document.getElementById('useLocationBtn');
+            const defaultBadge = document.getElementById('defaultBadge');
+
+            if (savedDefault && currentLoadedCity.toLowerCase() === savedDefault.toLowerCase()) {
+                if (useBtn) useBtn.classList.add('hidden');
+                if (defaultBadge) defaultBadge.classList.remove('hidden');
+            } else {
+                if (useBtn) useBtn.classList.remove('hidden');
+                if (defaultBadge) defaultBadge.classList.add('hidden');
+            }
+        }
+
+        function parseOpenWeatherCondition(mainCondition) {
+            switch (mainCondition.toLowerCase()) {
+                case 'clear':
+                    return { emoji: '☀️' };
+                case 'clouds':
+                    return { emoji: '☁️' };
+                case 'rain':
+                case 'drizzle':
+                    return { emoji: '🌧️' };
+                case 'thunderstorm':
+                    return { emoji: '⛈️' };
+                case 'snow':
+                    return { emoji: '❄️' };
+                case 'mist':
+                case 'fog':
+                case 'haze':
+                    return { emoji: '🌫️' };
+                default:
+                    return { emoji: '🌤️' };
+            }
+        }
+
+        function showStatus(msg, type) {
+            const box = document.getElementById('weatherStatusMessage');
+            if (!box) return;
+            box.innerText = msg;
+            box.classList.remove('hidden', 'bg-amber-50', 'text-amber-800', 'bg-red-50', 'text-red-800', 'bg-blue-50', 'text-blue-800');
+
+            if (type === 'error') {
+                box.classList.add('bg-red-50', 'text-red-800', 'border', 'border-red-200');
+            } else {
+                box.classList.add('bg-blue-50', 'text-blue-800', 'border', 'border-blue-200');
+            }
+        }
+
+        function hideStatus() {
+            const box = document.getElementById('weatherStatusMessage');
+            if (box) box.classList.add('hidden');
+        }
+    </script>
 </x-app-layout>

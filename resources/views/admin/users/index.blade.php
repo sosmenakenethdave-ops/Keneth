@@ -15,7 +15,7 @@
                 </div>
             </div>
 
-            <!-- Add New User Button -->
+            <!-- Add New User Button (Synced with active role) -->
             <a href="{{ route('admin.users.create', ['role' => $role]) }}" 
                class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm shadow-lg shadow-emerald-900/30 transition transform hover:-translate-y-0.5">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,7 +56,7 @@
             <!-- Navigation Controls & Search Bar -->
             <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl shadow-2xl backdrop-blur-xl flex flex-col md:flex-row justify-between items-center gap-4">
                 
-                <!-- Navigation Tabs (Role Toggles + Admin Applications Tab) -->
+                <!-- Navigation Tabs -->
                 <div class="flex flex-wrap items-center gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800/80 w-full md:w-auto">
                     <a href="{{ route('admin.users.index', ['role' => 'student']) }}" 
                        class="px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition flex items-center gap-2 {{ $role === 'student' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/40' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -95,7 +95,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <!-- Users Table Card -->
@@ -148,7 +147,7 @@
                                         </td>
                                     @elseif($role === 'instructor')
                                         <td class="px-6 py-4 text-slate-300 whitespace-nowrap text-sm">
-                                            <span class="text-slate-200 font-medium">{{ $user->academic_rank ?? 'Instructor' }}</span>
+                                            <span class="text-slate-200 font-medium">{{ $user->academic_rank ?? 'N/A' }}</span>
                                         </td>
                                     @endif
 
@@ -174,7 +173,7 @@
                                             </form>
                                         @endif
 
-                                        <!-- Edit -->
+                                        <!-- Edit (Passed with role parameter if needed by your controller/routes) -->
                                         <a href="{{ route('admin.users.edit', $user->id) }}" 
                                            class="inline-block px-3 py-1.5 bg-blue-600/20 text-blue-300 border border-blue-500/30 rounded-lg hover:bg-blue-600 hover:text-white transition text-xs font-semibold">
                                             Edit
@@ -195,7 +194,7 @@
                                 </tr>
                             @empty
                                 <tr id="no-users-row">
-                                    <td colspan="5" class="px-6 py-12 text-center text-slate-500 font-medium">
+                                    <td colspan="{{ $role === 'admin' ? 4 : 5 }}" class="px-6 py-12 text-center text-slate-500 font-medium">
                                         Walang nahanap na record para sa {{ $role }}.
                                     </td>
                                 </tr>
@@ -203,7 +202,7 @@
 
                             <!-- Hidden dynamic row for live search -->
                             <tr id="no-search-results" class="hidden">
-                                <td colspan="5" class="px-6 py-12 text-center text-slate-500 font-medium">
+                                <td colspan="{{ $role === 'admin' ? 4 : 5 }}" class="px-6 py-12 text-center text-slate-500 font-medium">
                                     Walang tumugmang {{ $role }} sa iyong ginawang paghahanap.
                                 </td>
                             </tr>

@@ -12,15 +12,35 @@ class ScheduleController extends Controller
 {
     public function index()
     {
-        $schedules = Schedule::with(['subject', 'room', 'instructor'])->get();
+        // Sinigurong kasama ang relations at naka-group o order kung kinakailangan
+        $schedules = Schedule::with(['subject', 'room', 'instructor'])->latest()->paginate(10);
+        
+        // Pwede rin nating ipasa ang mga instructors o grouped data kung gagamitin sa view side filters
         return view('admin.schedules.index', compact('schedules'));
     }
 
     public function create()
     {
-        $subjects = Subject::all();
-        $rooms = Room::all();
-        $instructors = User::where('role', 'instructor')->get();
+        // I-group ang subjects ayon sa Course para sa organized dropdown selection
+        $subjects = Subject::orderBy('course')
+            ->orderBy('year')
+            ->orderBy('semester')
+            ->orderBy('code')
+            ->get()
+            ->groupBy('course');
+
+        // I-group ang rooms ayon sa Building
+        $rooms = Room::orderBy('building')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('building');
+
+        // Kunin ang mga instructor at i-order ayon sa pangalan o rank
+        $instructors = User::where('role', 'instructor')
+            ->orderBy('academic_rank')
+            ->orderBy('name')
+            ->get();
+
         return view('admin.schedules.create', compact('subjects', 'rooms', 'instructors'));
     }
 
@@ -34,42 +54,70 @@ class ScheduleController extends Controller
             'end_time' => 'required|after:start_time',
         ]);
 
-        // Conflict Check 1: Room Conflict Detection
-        $roomConflict = Schedule::where('room_id', $request->room_id)
-            ->where('day', $request->day)
-            ->where(function ($query) use ($request) {
-                $query->whereBetween('start_time', [$request->start_time, $request->end_time])
-                    ->orWhereBetween('end_time', [$request->start_time, $request->end_time]);
+        $day = $request->day;
+        $startTime = $request->start_time;
+        $endTime = $request->end_time;
+        $roomId = $request->room_id;
+        $instructorId = $request->instructor_id;
+
+        // 1. Room Conflict Detection Logic
+        $roomConflict = Schedule::where('room_id', $roomId)
+            ->where('day', $day)
+            ->where(function ($query) use ($startTime, $endTime) {
+                $query->whereBetween('start_time', [$startTime, $endTime])
+                      ->orWhereBetween('end_time', [$startTime, $endTime])
+                      ->orWhere(function ($q) use ($startTime, $endTime) {
+                          $q->where('start_time', '<=', $startTime)
+                            ->where('end_time', '>=', $endTime);
+                      });
             })->exists();
 
         if ($roomConflict) {
-            return back()->withErrors(['room_id' => 'Conflict Detected: High-level conflict! Ang napiling Room ay nakareserba na sa oras na ito.'])->withInput();
+            return back()->withErrors(['room_id' => '⚠️ Room Conflict: Ang napiling room ay may klase na sa araw at oras na ito!'])->withInput();
         }
 
-        // Conflict Check 2: Instructor Conflict Detection
-        if ($request->instructor_id) {
-            $instructorConflict = Schedule::where('instructor_id', $request->instructor_id)
-                ->where('day', $request->day)
-                ->where(function ($query) use ($request) {
-                    $query->whereBetween('start_time', [$request->start_time, $request->end_time])
-                        ->orWhereBetween('end_time', [$request->start_time, $request->end_time]);
+        // 2. Instructor Conflict Detection Logic
+        if ($instructorId) {
+            $instructorConflict = Schedule::where('instructor_id', $instructorId)
+                ->where('day', $day)
+                ->where(function ($query) use ($startTime, $endTime) {
+                    $query->whereBetween('start_time', [$startTime, $endTime])
+                          ->orWhereBetween('end_time', [$startTime, $endTime])
+                          ->orWhere(function ($q) use ($startTime, $endTime) {
+                              $q->where('start_time', '<=', $startTime)
+                                ->where('end_time', '>=', $endTime);
+                          });
                 })->exists();
 
             if ($instructorConflict) {
-                return back()->withErrors(['instructor_id' => 'Conflict Detected: May klase na ang Instructors sa kaparehong oras!'])->withInput();
+                return back()->withErrors(['instructor_id' => '⚠️ Instructor Conflict: May iba nang klase ang instructor na ito sa kaparehong oras!'])->withInput();
             }
         }
 
         Schedule::create($request->all());
 
-        return redirect()->route('admin.schedules.index')->with('success', 'Schedule created successfully.');
+        return redirect()->route('admin.schedules.index')->with('success', 'Matagumpay na naidagdag ang schedule nang walang conflict.');
     }
 
     public function edit(Schedule $schedule)
     {
-        $subjects = Subject::all();
-        $rooms = Room::all();
-        $instructors = User::where('role', 'instructor')->get();
+        $subjects = Subject::orderBy('course')
+            ->orderBy('year')
+            ->orderBy('semester')
+            ->orderBy('code')
+            ->get()
+            ->groupBy('course');
+
+        $rooms = Room::orderBy('building')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('building');
+
+        $instructors = User::where('role', 'instructor')
+            ->orderBy('academic_rank')
+            ->orderBy('name')
+            ->get();
+
         return view('admin.schedules.edit', compact('schedule', 'subjects', 'rooms', 'instructors'));
     }
 
@@ -83,14 +131,56 @@ class ScheduleController extends Controller
             'end_time' => 'required|after:start_time',
         ]);
 
+        $day = $request->day;
+        $startTime = $request->start_time;
+        $endTime = $request->end_time;
+        $roomId = $request->room_id;
+        $instructorId = $request->instructor_id;
+
+        // 1. Room Conflict Detection (Excluding current schedule)
+        $roomConflict = Schedule::where('id', '!=', $schedule->id)
+            ->where('room_id', $roomId)
+            ->where('day', $day)
+            ->where(function ($query) use ($startTime, $endTime) {
+                $query->whereBetween('start_time', [$startTime, $endTime])
+                      ->orWhereBetween('end_time', [$startTime, $endTime])
+                      ->orWhere(function ($q) use ($startTime, $endTime) {
+                          $q->where('start_time', '<=', $startTime)
+                            ->where('end_time', '>=', $endTime);
+                      });
+            })->exists();
+
+        if ($roomConflict) {
+            return back()->withErrors(['room_id' => '⚠️ Room Conflict: Ang napiling room ay ginagamit na sa oras na ito!'])->withInput();
+        }
+
+        // 2. Instructor Conflict Detection (Excluding current schedule)
+        if ($instructorId) {
+            $instructorConflict = Schedule::where('id', '!=', $schedule->id)
+                ->where('instructor_id', $instructorId)
+                ->where('day', $day)
+                ->where(function ($query) use ($startTime, $endTime) {
+                    $query->whereBetween('start_time', [$startTime, $endTime])
+                          ->orWhereBetween('end_time', [$startTime, $endTime])
+                          ->orWhere(function ($q) use ($startTime, $endTime) {
+                              $q->where('start_time', '<=', $startTime)
+                                ->where('end_time', '>=', $endTime);
+                          });
+                })->exists();
+
+            if ($instructorConflict) {
+                return back()->withErrors(['instructor_id' => '⚠️ Instructor Conflict: May klase na ang instructor sa oras na ito!'])->withInput();
+            }
+        }
+
         $schedule->update($request->all());
 
-        return redirect()->route('admin.schedules.index')->with('success', 'Schedule updated successfully.');
+        return redirect()->route('admin.schedules.index')->with('success', 'Matagumpay na na-update ang schedule.');
     }
 
     public function destroy(Schedule $schedule)
     {
         $schedule->delete();
-        return redirect()->route('admin.schedules.index')->with('success', 'Schedule deleted successfully.');
+        return redirect()->route('admin.schedules.index')->with('success', 'Matagumpay na na-delete ang schedule.');
     }
 }

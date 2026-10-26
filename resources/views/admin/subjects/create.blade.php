@@ -29,6 +29,16 @@
                 <form action="{{ route('admin.subjects.store') }}" method="POST" class="space-y-6">
                     @csrf
 
+                    <!-- Course / Curriculum (IT o CS) -->
+                    <div>
+                        <label class="block text-base font-semibold text-white mb-2">Course Program</label>
+                        <select name="course" required 
+                            class="w-full px-4 py-3 rounded-xl bg-slate-900 border-2 border-slate-600 text-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 transition outline-none">
+                            <option value="IT" {{ old('course') == 'IT' ? 'selected' : '' }}>BS Information Technology (IT)</option>
+                            <option value="CS" {{ old('course') == 'CS' ? 'selected' : '' }}>BS Computer Science (CS)</option>
+                        </select>
+                    </div>
+
                     <!-- Subject Code -->
                     <div>
                         <label class="block text-base font-semibold text-white mb-2">Subject Code</label>
@@ -41,6 +51,31 @@
                         <label class="block text-base font-semibold text-white mb-2">Subject Title</label>
                         <input type="text" name="title" value="{{ old('title') }}" required placeholder="e.g. Integrative Programming 2" 
                             class="w-full px-4 py-3 rounded-xl bg-slate-900 border-2 border-slate-600 text-white placeholder-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 transition outline-none">
+                    </div>
+
+                    <!-- Year Level & Semester (Grid Layout) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Year Level -->
+                        <div>
+                            <label class="block text-base font-semibold text-white mb-2">Year Level</label>
+                            <select name="year" required 
+                                class="w-full px-4 py-3 rounded-xl bg-slate-900 border-2 border-slate-600 text-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 transition outline-none">
+                                <option value="1" {{ old('year') == 1 ? 'selected' : '' }}>1st Year</option>
+                                <option value="2" {{ old('year') == 2 ? 'selected' : '' }}>2nd Year</option>
+                                <option value="3" {{ old('year') == 3 ? 'selected' : '' }}>3rd Year</option>
+                                <option value="4" {{ old('year') == 4 ? 'selected' : '' }}>4th Year</option>
+                            </select>
+                        </div>
+
+                        <!-- Semester -->
+                        <div>
+                            <label class="block text-base font-semibold text-white mb-2">Semester</label>
+                            <select name="semester" required 
+                                class="w-full px-4 py-3 rounded-xl bg-slate-900 border-2 border-slate-600 text-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 transition outline-none">
+                                <option value="1" {{ old('semester') == 1 ? 'selected' : '' }}>1st Semester</option>
+                                <option value="2" {{ old('semester') == 2 ? 'selected' : '' }}>2nd Semester</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Units -->

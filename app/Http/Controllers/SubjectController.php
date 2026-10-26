@@ -9,7 +9,13 @@ class SubjectController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::latest()->get();
+        // I-sort ang subjects ayon sa course, year, semester, at code para malinis ang pag-group sa view
+        $subjects = Subject::orderBy('course')
+            ->orderBy('year')
+            ->orderBy('semester')
+            ->orderBy('code')
+            ->get();
+        
         return view('admin.subjects.index', compact('subjects'));
     }
 
@@ -24,6 +30,9 @@ class SubjectController extends Controller
             'code' => 'required|unique:subjects,code',
             'title' => 'required',
             'units' => 'required|integer',
+            'course' => 'required|in:IT,CS',
+            'year' => 'required|integer|min:1|max:4',
+            'semester' => 'required|integer|min:1|max:2',
         ]);
 
         Subject::create($request->all());
@@ -42,6 +51,9 @@ class SubjectController extends Controller
             'code' => 'required|unique:subjects,code,' . $subject->id,
             'title' => 'required',
             'units' => 'required|integer',
+            'course' => 'required|in:IT,CS',
+            'year' => 'required|integer|min:1|max:4',
+            'semester' => 'required|integer|min:1|max:2',
         ]);
 
         $subject->update($request->all());

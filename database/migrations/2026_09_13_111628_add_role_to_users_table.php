@@ -6,13 +6,30 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        // Inalis ang schema alteration dahil nakalagy na sa create_users_table
+        Schema::table('users', function (Blueprint $table) {
+            // Kung wala pa, gagawin. Kung meron na, papalitan/i-modify para maging string at iwas-truncation
+            if (!Schema::hasColumn('users', 'role')) {
+                $table->string('role')->default('student')->after('password');
+            } else {
+                $table->string('role')->default('student')->change();
+            }
+        });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        //
+        Schema::table('users', function (Blueprint $table) {
+            if (Schema::hasColumn('users', 'role')) {
+                $table->dropColumn('role');
+            }
+        });
     }
 };

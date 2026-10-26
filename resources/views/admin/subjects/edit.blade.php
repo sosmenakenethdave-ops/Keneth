@@ -1,26 +1,102 @@
 <x-app-layout>
-    <x-slot name="header"><h2 class="font-semibold text-xl text-gray-800">Edit Subject</h2></x-slot>
+    <x-slot name="header">
+        <div class="flex justify-between items-center">
+            <h2 class="font-bold text-2xl text-white leading-tight">
+                Edit Subject
+            </h2>
+            <a href="{{ route('admin.subjects.index') }}" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-semibold transition">
+                ← Back to Subjects
+            </a>
+        </div>
+    </x-slot>
 
     <div class="py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white p-6 shadow-sm sm:rounded-lg">
-                <form action="{{ route('admin.subjects.update', $subject) }}" method="POST" class="space-y-4">
-                    @csrf @method('PUT')
+            <!-- Error Alert Box -->
+            @if($errors->any())
+                <div class="bg-red-500/10 border border-red-500/50 text-red-400 px-5 py-4 rounded-xl mb-6 backdrop-blur-md">
+                    <div class="font-bold mb-1">Paki-ayos ang mga sumusunod na error:</div>
+                    <ul class="list-disc list-inside text-sm space-y-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <!-- Dark Card Container -->
+            <div class="bg-slate-800/90 border border-slate-700/80 shadow-2xl rounded-2xl p-8 backdrop-blur-md">
+                <form action="{{ route('admin.subjects.update', $subject) }}" method="POST" class="space-y-6">
+                    @csrf 
+                    @method('PUT')
+
+                    <!-- Course / Curriculum (IT o CS) -->
                     <div>
-                        <label class="block font-medium text-sm text-gray-700">Subject Code</label>
-                        <input type="text" name="code" value="{{ $subject->code }}" required class="w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-base font-semibold text-white mb-2">Course Program</label>
+                        <select name="course" required 
+                            class="w-full px-4 py-3 rounded-xl bg-slate-900 border-2 border-slate-600 text-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 transition outline-none">
+                            <option value="IT" {{ (old('course', $subject->course) == 'IT') ? 'selected' : '' }}>BS Information Technology (IT)</option>
+                            <option value="CS" {{ (old('course', $subject->course) == 'CS') ? 'selected' : '' }}>BS Computer Science (CS)</option>
+                        </select>
                     </div>
+
+                    <!-- Subject Code -->
                     <div>
-                        <label class="block font-medium text-sm text-gray-700">Subject Title</label>
-                        <input type="text" name="title" value="{{ $subject->title }}" required class="w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-base font-semibold text-white mb-2">Subject Code</label>
+                        <input type="text" name="code" value="{{ old('code', $subject->code) }}" required autofocus 
+                            class="w-full px-4 py-3 rounded-xl bg-slate-900 border-2 border-slate-600 text-white placeholder-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 transition outline-none">
                     </div>
+
+                    <!-- Subject Title -->
                     <div>
-                        <label class="block font-medium text-sm text-gray-700">Units</label>
-                        <input type="number" name="units" value="{{ $subject->units }}" required class="w-full rounded-md border-gray-300 shadow-sm">
+                        <label class="block text-base font-semibold text-white mb-2">Subject Title</label>
+                        <input type="text" name="title" value="{{ old('title', $subject->title) }}" required 
+                            class="w-full px-4 py-3 rounded-xl bg-slate-900 border-2 border-slate-600 text-white placeholder-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 transition outline-none">
                     </div>
-                    <div class="flex justify-end space-x-2">
-                        <a href="{{ route('admin.subjects.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</a>
-                        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded">Update Subject</button>
+
+                    <!-- Year Level & Semester (Grid Layout) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Year Level -->
+                        <div>
+                            <label class="block text-base font-semibold text-white mb-2">Year Level</label>
+                            <select name="year" required 
+                                class="w-full px-4 py-3 rounded-xl bg-slate-900 border-2 border-slate-600 text-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 transition outline-none">
+                                <option value="1" {{ (old('year', $subject->year) == 1) ? 'selected' : '' }}>1st Year</option>
+                                <option value="2" {{ (old('year', $subject->year) == 2) ? 'selected' : '' }}>2nd Year</option>
+                                <option value="3" {{ (old('year', $subject->year) == 3) ? 'selected' : '' }}>3rd Year</option>
+                                <option value="4" {{ (old('year', $subject->year) == 4) ? 'selected' : '' }}>4th Year</option>
+                            </select>
+                        </div>
+
+                        <!-- Semester -->
+                        <div>
+                            <label class="block text-base font-semibold text-white mb-2">Semester</label>
+                            <select name="semester" required 
+                                class="w-full px-4 py-3 rounded-xl bg-slate-900 border-2 border-slate-600 text-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 transition outline-none">
+                                <option value="1" {{ (old('semester', $subject->semester) == 1) ? 'selected' : '' }}>1st Semester</option>
+                                <option value="2" {{ (old('semester', $subject->semester) == 2) ? 'selected' : '' }}>2nd Semester</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Units -->
+                    <div>
+                        <label class="block text-base font-semibold text-white mb-2">Units</label>
+                        <input type="number" name="units" value="{{ old('units', $subject->units) }}" required min="1" 
+                            class="w-full px-4 py-3 rounded-xl bg-slate-900 border-2 border-slate-600 text-white placeholder-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 transition outline-none">
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-end space-x-4 pt-4 border-t border-slate-700/60">
+                        <a href="{{ route('admin.subjects.index') }}" 
+                           class="px-5 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold transition">
+                            Cancel
+                        </a>
+
+                        <button type="submit" 
+                                class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-lg shadow-indigo-600/30 transition transform hover:-translate-y-0.5">
+                            Update Subject
+                        </button>
                     </div>
                 </form>
             </div>

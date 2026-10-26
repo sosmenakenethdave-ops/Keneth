@@ -7,6 +7,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminApplicationController;
+use App\Http\Controllers\WeatherController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -20,16 +21,32 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Admin Application Routes (Public submission of requirements)
+// Admin Application Routes
 Route::get('/apply-admin', [AdminApplicationController::class, 'create'])->name('admin.apply');
 Route::post('/apply-admin', [AdminApplicationController::class, 'store'])->name('admin.apply.submit');
+
+/*
+|--------------------------------------------------------------------------
+| Role-Specific Login Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/admin/login', function () {
+    return view('auth.login', ['role' => 'admin']);
+})->name('admin.login');
+
+Route::get('/instructor/login', function () {
+    return view('auth.login', ['role' => 'instructor']);
+})->name('instructor.login');
+
+Route::get('/student/login', function () {
+    return view('auth.login', ['role' => 'student']);
+})->name('student.login');
 
 
 /*
 |--------------------------------------------------------------------------
 | Generic Redirect Dashboard
 |--------------------------------------------------------------------------
-| Dito pupunta ang user pagka-login at i-reredirect batay sa kanyang role
 */
 Route::get('/dashboard', function () {
     $role = auth()->user()->role;
@@ -48,18 +65,16 @@ Route::get('/dashboard', function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', RoleMiddleware::class . ':admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Admin Dashboard (May Weather API / Analytics logic)
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard');
 
     // User Management CRUD
     Route::resource('users', UserController::class);
     Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
-    // Admin Applications Review (Reviewing submitted requirements)
+    // Admin Applications Review
     Route::get('/applications', [AdminApplicationController::class, 'index'])->name('applications.index');
     Route::get('/applications/{application}', [AdminApplicationController::class, 'show'])->name('applications.show');
     
-    // In-update mula Route::post patungong Route::match(['post', 'patch']) para suportahan ang parehong HTTP verbs
     Route::match(['post', 'patch'], '/applications/{application}/approve', [AdminApplicationController::class, 'approve'])->name('applications.approve');
     Route::match(['post', 'patch'], '/applications/{application}/reject', [AdminApplicationController::class, 'reject'])->name('applications.reject');
 
@@ -76,7 +91,8 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->prefix('admin')->
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', RoleMiddleware::class . ':instructor'])->prefix('instructor')->name('instructor.')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Pinag-iba natin ang tawag sa function para hindi magsalubong sa admin
+    Route::get('/dashboard', [DashboardController::class, 'instructorDashboard'])->name('dashboard');
 });
 
 
@@ -86,7 +102,19 @@ Route::middleware(['auth', RoleMiddleware::class . ':instructor'])->prefix('inst
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', RoleMiddleware::class . ':student'])->prefix('student')->name('student.')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Nagdagdag din tayo ng dedicated function para sa Student dashboard
+    Route::get('/dashboard', [DashboardController::class, 'studentDashboard'])->name('dashboard');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Shared Authenticated API / Weather Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    Route::get('/api/weather', [WeatherController::class, 'getWeather'])->name('weather.get');
+    Route::get('/api/weather/search', [WeatherController::class, 'searchLocations'])->name('weather.search');
 });
 
 
