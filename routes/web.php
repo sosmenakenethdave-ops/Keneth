@@ -10,7 +10,10 @@ use App\Http\Controllers\AdminApplicationController;
 use App\Http\Controllers\WeatherController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GoogleAuthController;
 
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
 /*
 |--------------------------------------------------------------------------
 | Public Routes

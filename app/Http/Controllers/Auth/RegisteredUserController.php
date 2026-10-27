@@ -34,18 +34,32 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'string', 'in:student,instructor,admin'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'academic_rank' => $request->academic_rank,
+            'course' => $request->course,
+            'year_level' => $request->year_level,
+            'section' => $request->section,
+            'status' => 'active',
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // I-redirect sa tamang dashboard batay sa role ng narehistrong user
+        if ($user->role === 'admin') {
+            return redirect('/admin/dashboard');
+        } elseif ($user->role === 'instructor') {
+            return redirect('/instructor/dashboard');
+        }
+
+        return redirect('/student/dashboard');
     }
 }

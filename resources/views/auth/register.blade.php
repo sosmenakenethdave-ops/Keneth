@@ -75,73 +75,73 @@
                     </div>
 
                     {{-- INSTRUCTOR SPECIFIC FIELD --}}
-                    @if ($type === 'instructor')
-                        <div>
-                            <label for="academic_rank" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                                Academic Rank <span class="text-red-500">*</span>
-                            </label>
-                            <select id="academic_rank" name="academic_rank" required
-                                class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                                <option value="" disabled selected>Select Academic Rank</option>
-                                <option value="Instructor I" {{ old('academic_rank') == 'Instructor I' ? 'selected' : '' }}>Instructor I</option>
-                                <option value="Instructor II" {{ old('academic_rank') == 'Instructor II' ? 'selected' : '' }}>Instructor II</option>
-                                <option value="Instructor III" {{ old('academic_rank') == 'Instructor III' ? 'selected' : '' }}>Instructor III</option>
-                                <option value="Assistant Professor I" {{ old('academic_rank') == 'Assistant Professor I' ? 'selected' : '' }}>Assistant Professor I</option>
-                                <option value="Assistant Professor II" {{ old('academic_rank') == 'Assistant Professor II' ? 'selected' : '' }}>Assistant Professor II</option>
-                                <option value="Associate Professor" {{ old('academic_rank') == 'Associate Professor' ? 'selected' : '' }}>Associate Professor</option>
-                                <option value="Professor" {{ old('academic_rank') == 'Professor' ? 'selected' : '' }}>Professor</option>
-                            </select>
-                            <x-input-error :messages="$errors->get('academic_rank')" class="mt-1 text-xs text-red-500" />
-                        </div>
+    @if ($type === 'instructor')
+        <div>
+            <label for="academic_rank" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                Academic Rank <span class="text-red-500">*</span>
+            </label>
+            <select id="academic_rank" name="academic_rank" required
+                class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                <option value="" disabled selected>Select Academic Rank</option>
+                <option value="Instructor I" {{ old('academic_rank') == 'Instructor I' ? 'selected' : '' }}>Instructor I</option>
+                <option value="Instructor II" {{ old('academic_rank') == 'Instructor II' ? 'selected' : '' }}>Instructor II</option>
+                <option value="Instructor III" {{ old('academic_rank') == 'Instructor III' ? 'selected' : '' }}>Instructor III</option>
+                <option value="Assistant Professor I" {{ old('academic_rank') == 'Assistant Professor I' ? 'selected' : '' }}>Assistant Professor I</option>
+                <option value="Assistant Professor II" {{ old('academic_rank') == 'Assistant Professor II' ? 'selected' : '' }}>Assistant Professor II</option>
+                <option value="Associate Professor" {{ old('academic_rank') == 'Associate Professor' ? 'selected' : '' }}>Associate Professor</option>
+                <option value="Professor" {{ old('academic_rank') == 'Professor' ? 'selected' : '' }}>Professor</option>
+            </select>
+            <x-input-error :messages="$errors->get('academic_rank')" class="mt-1 text-xs text-red-500" />
+        </div>
 
-                    {{-- STUDENT SPECIFIC FIELDS --}}
-                    @else
-                        <!-- Course, Year Level & Section Grid -->
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <!-- Course / Program -->
-                            <div>
-                                <label for="course" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                                    Course <span class="text-red-500">*</span>
-                                </label>
-                                <select id="course" name="course" required
-                                    class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                                    <option value="" disabled selected>Select</option>
-                                    <option value="BSIT" {{ old('course') == 'BSIT' ? 'selected' : '' }}>BSIT</option>
-                                    <option value="BSCS" {{ old('course') == 'BSCS' ? 'selected' : '' }}>BSCS</option>
-                                    <option value="BSEMC" {{ old('course') == 'BSEMC' ? 'selected' : '' }}>BSEMC</option>
-                                    <option value="ACT" {{ old('course') == 'ACT' ? 'selected' : '' }}>ACT</option>
-                                </select>
-                                <x-input-error :messages="$errors->get('course')" class="mt-1 text-xs text-red-500" />
-                            </div>
+    {{-- STUDENT SPECIFIC FIELDS (Gamitin na ang @elseif para hindi madamay ang iba) --}}
+    @elseif ($type === 'student')
+        <!-- Course, Year Level & Section Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <!-- Course / Program -->
+            <div>
+                <label for="course" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    Course <span class="text-red-500">*</span>
+                </label>
+                <select id="course" name="course" required
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                    <option value="" disabled selected>Select</option>
+                    <option value="BSIT" {{ old('course') == 'BSIT' ? 'selected' : '' }}>BSIT</option>
+                    <option value="BSCS" {{ old('course') == 'BSCS' ? 'selected' : '' }}>BSCS</option>
+                    <option value="BSEMC" {{ old('course') == 'BSEMC' ? 'selected' : '' }}>BSEMC</option>
+                    <option value="ACT" {{ old('course') == 'ACT' ? 'selected' : '' }}>ACT</option>
+                </select>
+                <x-input-error :messages="$errors->get('course')" class="mt-1 text-xs text-red-500" />
+            </div>
 
-                            <!-- Year Level -->
-                            <div>
-                                <label for="year_level" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                                    Year <span class="text-red-500">*</span>
-                                </label>
-                                <select id="year_level" name="year_level" required
-                                    class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                                    <option value="" disabled selected>Select</option>
-                                    <option value="1st Year" {{ old('year_level') == '1st Year' ? 'selected' : '' }}>1st Year</option>
-                                    <option value="2nd Year" {{ old('year_level') == '2nd Year' ? 'selected' : '' }}>2nd Year</option>
-                                    <option value="3rd Year" {{ old('year_level') == '3rd Year' ? 'selected' : '' }}>3rd Year</option>
-                                    <option value="4th Year" {{ old('year_level') == '4th Year' ? 'selected' : '' }}>4th Year</option>
-                                </select>
-                                <x-input-error :messages="$errors->get('year_level')" class="mt-1 text-xs text-red-500" />
-                            </div>
+            <!-- Year Level -->
+            <div>
+                <label for="year_level" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    Year <span class="text-red-500">*</span>
+                </label>
+                <select id="year_level" name="year_level" required
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                    <option value="" disabled selected>Select</option>
+                    <option value="1st Year" {{ old('year_level') == '1st Year' ? 'selected' : '' }}>1st Year</option>
+                    <option value="2nd Year" {{ old('year_level') == '2nd Year' ? 'selected' : '' }}>2nd Year</option>
+                    <option value="3rd Year" {{ old('year_level') == '3rd Year' ? 'selected' : '' }}>3rd Year</option>
+                    <option value="4th Year" {{ old('year_level') == '4th Year' ? 'selected' : '' }}>4th Year</option>
+                </select>
+                <x-input-error :messages="$errors->get('year_level')" class="mt-1 text-xs text-red-500" />
+            </div>
 
-                            <!-- Section / Group -->
-                            <div>
-                                <label for="section" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                                    Section
-                                </label>
-                                <input id="section" type="text" name="section" value="{{ old('section') }}"
-                                    placeholder="e.g. 3A"
-                                    class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-sm placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                                <x-input-error :messages="$errors->get('section')" class="mt-1 text-xs text-red-500" />
-                            </div>
-                        </div>
-                    @endif
+            <!-- Section / Group -->
+            <div>
+                <label for="section" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    Section
+                </label>
+                <input id="section" type="text" name="section" value="{{ old('section') }}"
+                    placeholder="e.g. 3A"
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-sm placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                <x-input-error :messages="$errors->get('section')" class="mt-1 text-xs text-red-500" />
+            </div>
+        </div>
+    @endif
 
                     <!-- Password & Confirm Password Grid -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -28,6 +28,7 @@ class User extends Authenticatable
         'course',        // Idagdag ito
         'year_level',    // Idagdag ito
         'section',       // Idagdag ito
+        'google_id',
     ];
 
     /**
