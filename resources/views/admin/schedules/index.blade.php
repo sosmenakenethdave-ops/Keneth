@@ -3,9 +3,9 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <h2 class="font-bold text-2xl text-white leading-tight tracking-wide">
-                    Schedule Management
+                    Schedule & Faculty Workload Management
                 </h2>
-                <p class="text-xs text-slate-400">CICT Academic Scheduling & Conflict Prevention Dashboard</p>
+                <p class="text-xs text-slate-400">CICT Academic Scheduling & Automated Instructor Mapping Dashboard</p>
             </div>
             
             <div class="flex items-center space-x-3">
@@ -30,7 +30,14 @@
         </div>
     </x-slot>
 
-    <div class="py-8 bg-slate-950 min-h-screen text-slate-100" x-data="{ search: '', selectedDay: 'All', selectedCourse: 'All' }">
+    <!-- Alpine.js State Navigation para sa Professional Ranks, Day, Course, at Search -->
+    <div class="py-8 bg-slate-950 min-h-screen text-slate-100" 
+         x-data="{ 
+            search: '', 
+            selectedDay: 'All', 
+            selectedCourse: 'All', 
+            selectedProfession: 'All' 
+         }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <!-- Quick Stats Overview Cards -->
@@ -47,7 +54,7 @@
 
                 <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex items-center justify-between">
                     <div>
-                        <p class="text-xs text-slate-400 font-medium">May Instructor</p>
+                        <p class="text-xs text-slate-400 font-medium">May Assigned Instructor</p>
                         <p class="text-2xl font-bold text-emerald-400 mt-1">
                             {{ $schedules->filter(fn($s) => $s->instructor_id !== null)->count() }}
                         </p>
@@ -59,7 +66,7 @@
 
                 <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex items-center justify-between">
                     <div>
-                        <p class="text-xs text-slate-400 font-medium">Unassigned Classes</p>
+                        <p class="text-xs text-slate-400 font-medium">Unassigned Classes (Open for Hiring)</p>
                         <p class="text-2xl font-bold text-amber-400 mt-1">
                             {{ $schedules->filter(fn($s) => $s->instructor_id === null)->count() }}
                         </p>
@@ -83,42 +90,73 @@
             @endif
 
             <!-- Navigation Controls & Filters Bar -->
-            <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl shadow-2xl backdrop-blur-xl flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl shadow-2xl backdrop-blur-xl space-y-4">
                 
-                <!-- Day & Course Filter Tabs -->
-                <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                    <!-- Day Filter -->
-                    <div class="flex items-center gap-1 bg-slate-950 p-1.5 rounded-xl border border-slate-800/80 overflow-x-auto">
-                        <button @click="selectedDay = 'All'" 
-                                :class="selectedDay === 'All' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
-                                class="px-3 py-1.5 rounded-lg font-semibold text-xs transition whitespace-nowrap">
-                            Lahat
+                <!-- 1. Instructor Rank / Profession Filter Tabs (Para sa DepEd-style default mapping) -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-800 pb-3">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">I-filter ayon sa Instructor Rank / Profession:</span>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <button @click="selectedProfession = 'All'" 
+                                :class="selectedProfession === 'All' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+                                class="px-3 py-1.5 rounded-lg font-semibold text-xs transition">
+                            Lahat ng Ranks
                         </button>
-                        <template x-for="day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']">
-                            <button @click="selectedDay = day" 
-                                    :class="selectedDay === day ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
-                                    class="px-3 py-1.5 rounded-lg font-semibold text-xs transition whitespace-nowrap" x-text="day"></button>
-                        </template>
+                        <button @click="selectedProfession = 'Instructor I'" 
+                                :class="selectedProfession === 'Instructor I' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+                                class="px-3 py-1.5 rounded-lg font-semibold text-xs transition">
+                            Instructor I
+                        </button>
+                        <button @click="selectedProfession = 'Instructor II'" 
+                                :class="selectedProfession === 'Instructor II' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+                                class="px-3 py-1.5 rounded-lg font-semibold text-xs transition">
+                            Instructor II
+                        </button>
+                        <button @click="selectedProfession = 'Assistant Professor'" 
+                                :class="selectedProfession === 'Assistant Professor' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+                                class="px-3 py-1.5 rounded-lg font-semibold text-xs transition">
+                            Assistant Professor
+                        </button>
                     </div>
-
-                    <!-- Course Filter Dropdown -->
-                    <select x-model="selectedCourse" 
-                            class="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500">
-                        <option value="All">Lahat ng Course</option>
-                        <option value="BSIT">BSIT</option>
-                        <option value="BSCS">BSCS</option>
-                    </select>
                 </div>
 
-                <!-- Live Search Box -->
-                <div class="w-full md:w-72">
-                    <div class="relative">
-                        <input type="text" x-model="search" placeholder="Search Subject, Instructor, Room..." 
-                               class="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
+                <!-- 2. Day, Course, at Live Search Filters -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    
+                    <!-- Day & Course Filters -->
+                    <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                        <!-- Day Filter -->
+                        <div class="flex items-center gap-1 bg-slate-950 p-1.5 rounded-xl border border-slate-800/80 overflow-x-auto">
+                            <button @click="selectedDay = 'All'" 
+                                    :class="selectedDay === 'All' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+                                    class="px-3 py-1.5 rounded-lg font-semibold text-xs transition whitespace-nowrap">
+                                Lahat ng Araw
+                            </button>
+                            <template x-for="day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']">
+                                <button @click="selectedDay = day" 
+                                        :class="selectedDay === day ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+                                        class="px-3 py-1.5 rounded-lg font-semibold text-xs transition whitespace-nowrap" x-text="day"></button>
+                            </template>
+                        </div>
+
+                        <!-- Course Filter Dropdown -->
+                        <select x-model="selectedCourse" 
+                                class="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500">
+                            <option value="All">Lahat ng Course</option>
+                            <option value="BSIT">BSIT</option>
+                            <option value="BSCS">BSCS</option>
+                        </select>
+                    </div>
+
+                    <!-- Live Search Box -->
+                    <div class="w-full md:w-72">
+                        <div class="relative">
+                            <input type="text" x-model="search" placeholder="Search Subject, Instructor, Room..." 
+                                   class="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -131,7 +169,7 @@
                         <thead class="bg-slate-950/60">
                             <tr>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-indigo-400 uppercase tracking-wider">Subject Details</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-indigo-400 uppercase tracking-wider">Instructor</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-indigo-400 uppercase tracking-wider">Default Assigned Instructor & Rank</th>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-indigo-400 uppercase tracking-wider">Room & Building</th>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-indigo-400 uppercase tracking-wider">Day & Time</th>
                                 <th class="px-6 py-4 text-right text-xs font-bold text-indigo-400 uppercase tracking-wider">Actions</th>
@@ -139,16 +177,21 @@
                         </thead>
                         <tbody class="divide-y divide-slate-800/60 bg-slate-900/30 text-slate-200">
                             @forelse($schedules as $schedule)
+                                @php
+                                    // Halimbawa ng pagkuha ng profession/rank ng instructor (kung mayroon kang column na 'profession' o 'rank' sa users table)
+                                    $instructorRank = $schedule->instructor->profession ?? $schedule->instructor->rank ?? 'Instructor I';
+                                @endphp
                                 <tr class="hover:bg-slate-800/50 transition"
                                     x-show="(selectedDay === 'All' || '{{ $schedule->day }}' === selectedDay) &&
                                             (selectedCourse === 'All' || '{{ $schedule->subject->course ?? '' }}' === selectedCourse) &&
+                                            (selectedProfession === 'All' || '{{ $instructorRank }}' === selectedProfession) &&
                                             ('{{ strtolower(($schedule->subject->code ?? '') . ' ' . ($schedule->subject->title ?? '') . ' ' . ($schedule->instructor->name ?? '') . ' ' . ($schedule->room->name ?? '')) }}'.includes(search.toLowerCase()))">
                                     
                                     <!-- Subject Details -->
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="space-y-1">
                                             <div class="flex items-center space-x-2">
-                                                <span class="px-2.5 py-0.5 bg-indigo-500/20 font-mono text-xs font-bold text-indigo-300 rounded border border-indigo-500/30">
+                                                <span class="px-2.5 py-0.5 bg-indigo-500/25 font-mono text-xs font-bold text-indigo-300 rounded border border-indigo-500/30">
                                                     {{ $schedule->subject->code ?? 'N/A' }}
                                                 </span>
                                                 <span class="font-bold text-white text-sm">{{ $schedule->subject->title ?? 'N/A' }}</span>
@@ -161,19 +204,29 @@
                                         </div>
                                     </td>
 
-                                    <!-- Instructor -->
+                                    <!-- Instructor & Profession/Rank (DepEd-style Default Mapping) -->
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if($schedule->instructor)
-                                            <div class="flex items-center space-x-2">
-                                                <div class="h-7 w-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-indigo-400 text-xs">
-                                                    👨‍🏫
+                                            <div class="space-y-1">
+                                                <div class="flex items-center space-x-2">
+                                                    <div class="h-7 w-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-indigo-400 text-xs">
+                                                        👨‍🏫
+                                                    </div>
+                                                    <span class="text-slate-200 font-medium text-sm">{{ $schedule->instructor->name }}</span>
                                                 </div>
-                                                <span class="text-slate-200 font-medium text-sm">{{ $schedule->instructor->name }}</span>
+                                                <div>
+                                                    <span class="px-2 py-0.5 bg-slate-800 text-indigo-300 border border-slate-700 rounded text-[10px] font-semibold">
+                                                        💼 {{ $instructorRank }}
+                                                    </span>
+                                                </div>
                                             </div>
                                         @else
-                                            <span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg text-xs font-semibold">
-                                                ⚠️ Unassigned
-                                            </span>
+                                            <div class="space-y-1">
+                                                <span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg text-xs font-semibold inline-block">
+                                                    ⚠️ Default Unassigned Slot
+                                                </span>
+                                                <p class="text-[10px] text-slate-400 italic">Nakaabang para sa ma-hire na guro</p>
+                                            </div>
                                         @endif
                                     </td>
 
@@ -193,7 +246,7 @@
                                             🗓️ {{ $schedule->day }}
                                         </div>
                                         <div class="text-xs text-slate-400 font-mono">
-                                            ⏰ {{ date('g:i A', strtotime($schedule->start_time)) }} - {{ date('g:i A', strtotime($schedule->end_time)) }}
+                                            ⏰ {{ $schedule->start_time ? date('g:i A', strtotime($schedule->start_time)) : '' }} - {{ $schedule->end_time ? date('g:i A', strtotime($schedule->end_time)) : '' }}
                                         </div>
                                     </td>
 

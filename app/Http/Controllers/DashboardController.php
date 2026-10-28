@@ -47,7 +47,7 @@ class DashboardController extends Controller
         }
 
         // TODO: Kunin ang mga assigned classes/schedules ng instructor na ito mula sa database
-        $instructorSchedules = []; // Pansamantalang empty array
+        $instructorSchedules = [];
 
         return view('instructor.dashboard', compact('instructorSchedules'));
     }
@@ -63,10 +63,26 @@ class DashboardController extends Controller
             return $this->redirectBasedOnRole($user->role);
         }
 
-        // TODO: Kunin ang fixed semester schedule ng student na ito mula sa database
-        $studentSchedules = []; // Pansamantalang empty array
+        // 1. Kunin ang kurso, year level, at section ng student
+        $rawCourse = $user->course ?? 'IT'; 
+        $studentProgram = (str_contains(strtoupper($rawCourse), 'IT')) ? 'IT' : 'CS';
+        
+        $studentYear = $user->year_level ?? '3rd';
+        $studentSection = $user->section ?? '3A';
 
-        return view('student.dashboard', compact('studentSchedules'));
+        // 2. Kunin ang LAHAT ng subjects para sa buong 4 years ng kurso na ito mula sa Database/Seeder
+        $subjects = Subject::where('course', $studentProgram)
+            ->orderBy('year')
+            ->orderBy('semester')
+            ->orderBy('code')
+            ->get();
+
+        $studentSchedules = $subjects;
+
+        // 3. Kwentuhin ang total units para lumabas sa summary cards
+        $totalUnits = $subjects->sum('units');
+
+        return view('student.dashboard', compact('subjects', 'studentSchedules', 'studentProgram', 'studentYear', 'studentSection', 'totalUnits'));
     }
 
     /**

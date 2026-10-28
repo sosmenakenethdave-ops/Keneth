@@ -17,4 +17,12 @@ class Subject extends Model
         'semester',
         'course',
     ];
+
+    /**
+     * Relasyon patungo sa Schedule model
+     */
+    public function schedule()
+    {
+        return $this->hasOne(Schedule::class, 'subject_id'); // Palitan ang foreign key kung kinakailangan
+    }
 }

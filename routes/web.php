@@ -5,15 +5,19 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\StudentDashboardController; 
+use App\Http\Controllers\InstructorDashboardController; // <--- Idinagdag natin ito
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminApplicationController;
 use App\Http\Controllers\WeatherController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GoogleAuthController;
+use App\Models\Subject;
 
 Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -94,8 +98,16 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->prefix('admin')->
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', RoleMiddleware::class . ':instructor'])->prefix('instructor')->name('instructor.')->group(function () {
-    // Pinag-iba natin ang tawag sa function para hindi magsalubong sa admin
-    Route::get('/dashboard', [DashboardController::class, 'instructorDashboard'])->name('dashboard');
+    // Ginamit na natin ang InstructorDashboardController
+    Route::get('/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
+    
+    // Instructor Print Schedule Matrix
+    Route::get('/print-schedule', function () {
+        $instructorSubjects = Subject::with(['schedule.room', 'schedule.instructor'])->get();
+        return view('instructor.print.schedule', [
+            'subjects' => $instructorSubjects
+        ]);
+    })->name('print.schedule');
 });
 
 
@@ -105,8 +117,20 @@ Route::middleware(['auth', RoleMiddleware::class . ':instructor'])->prefix('inst
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', RoleMiddleware::class . ':student'])->prefix('student')->name('student.')->group(function () {
-    // Nagdagdag din tayo ng dedicated function para sa Student dashboard
-    Route::get('/dashboard', [DashboardController::class, 'studentDashboard'])->name('dashboard');
+    // Student Dashboard
+    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+    
+    // Print Schedule Matrix View para sa Student
+    Route::get('/print-schedule', function () {
+        $user = auth()->user();
+        $subjects = Subject::with(['schedule.room', 'schedule.instructor'])->get();
+        
+        return view('student.print.schedule', [
+            'subjects' => $subjects,
+            'studentYear' => '3rd',
+            'studentSection' => '3A'
+        ]);
+    })->name('print.schedule');
 });
 
 

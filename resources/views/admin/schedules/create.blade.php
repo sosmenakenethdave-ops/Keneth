@@ -1,18 +1,23 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-bold text-2xl text-white leading-tight">
-                Add New Schedule
-            </h2>
-            <a href="{{ route('admin.schedules.index') }}" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-semibold transition">
-                ← Back to Schedules
+            <div>
+                <h2 class="font-bold text-2xl text-white leading-tight">
+                    Add New Schedule & Section Assignment
+                </h2>
+                <p class="text-xs text-slate-400 mt-0.5">I-configure ang mga klase, itinalagang guro, silid-aralan, at seksyon.</p>
+            </div>
+            <a href="{{ route('admin.schedules.index') }}" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-sm font-semibold transition flex items-center space-x-1.5">
+                <span>←</span>
+                <span>Back to Schedules</span>
             </a>
         </div>
     </x-slot>
 
-    <div class="py-12" x-data="{ 
+    <div class="py-10 bg-slate-950 min-h-screen text-slate-100" x-data="{ 
         selectedCourse: 'IT', 
         selectedYear: '1', 
+        selectedSection: '{{ old('section', '') }}',
         selectedInstructorRank: 'All',
         selectedBuilding: 'All',
         selectedSubjectId: '{{ old('subject_id') }}',
@@ -22,12 +27,16 @@
         searchInstructor: '',
         searchRoom: ''
     }">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            
             <!-- Error Alert Box -->
             @if($errors->any())
-                <div class="bg-red-500/10 border border-red-500/50 text-red-400 px-5 py-4 rounded-xl mb-6 backdrop-blur-md">
-                    <div class="font-bold mb-1">Paki-ayos ang mga sumusunod na error:</div>
-                    <ul class="list-disc list-inside text-sm space-y-1">
+                <div class="bg-red-500/10 border border-red-500/50 text-red-400 px-5 py-4 rounded-2xl backdrop-blur-md shadow-xl">
+                    <div class="font-bold mb-1 flex items-center space-x-2">
+                        <span>⚠️</span>
+                        <span>Paki-ayos ang mga sumusunod na error bago ituloy:</span>
+                    </div>
+                    <ul class="list-disc list-inside text-xs space-y-1 mt-2">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -36,31 +45,59 @@
             @endif
 
             <!-- Card Container -->
-            <div class="bg-slate-800/90 border border-slate-700/80 shadow-2xl rounded-2xl p-8 backdrop-blur-md">
+            <div class="bg-slate-900/90 border border-slate-800 shadow-2xl rounded-2xl p-8 backdrop-blur-xl">
                 <form action="{{ route('admin.schedules.store') }}" method="POST" class="space-y-8">
                     @csrf
 
-                    <!-- 1. SUBJECT PICKER SECTION (Modern Grid Cards) -->
-                    <div class="space-y-4 bg-slate-900/40 p-5 rounded-2xl border border-slate-700/60">
+                    <!-- SECTION & PROGRAM CONFIGURATION (Para sa DepEd/University-style Section Setup) -->
+                    <div class="space-y-4 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-sm font-bold text-indigo-400">
+                                📌 Seksyon at Antas (Section & Year Assignment) <span class="text-rose-500">*</span>
+                            </label>
+                            <span class="text-[11px] text-slate-400">Tinutukoy nito kung aling section mapupunta ang schedule</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Section Input -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Pangalan ng Seksyon (Section Name)</label>
+                                <input type="text" name="section" x-model="selectedSection" placeholder="Hal. 3A, 3B, 4-1" required
+                                       class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                            </div>
+
+                            <!-- Academic Program Indicator -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Napiling Kurso (Program)</label>
+                                <div class="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-indigo-300 font-bold text-sm flex items-center justify-between">
+                                    <span x-text="selectedCourse === 'IT' ? '💻 BS Information Technology (BSIT)' : '🖥️ BS Computer Science (BSCS)'"></span>
+                                    <span class="text-xs text-slate-500 font-normal">Ayon sa Subject Tabs</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1. SUBJECT PICKER SECTION -->
+                    <div class="space-y-4 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
                         <div class="flex justify-between items-center">
-                            <label class="block text-base font-bold text-indigo-400">
+                            <label class="block text-sm font-bold text-indigo-400">
                                 1. Pumili ng Subject <span class="text-rose-500">*</span>
                             </label>
-                            <span class="text-xs text-slate-400 font-medium">I-click ang subject para piliin</span>
+                            <span class="text-[11px] text-slate-400">I-click ang card para piliin</span>
                         </div>
                         <input type="hidden" name="subject_id" x-model="selectedSubjectId" required>
 
                         <!-- Course Filter Tabs -->
-                        <div class="flex space-x-2 border-b border-slate-700 pb-3">
+                        <div class="flex space-x-2 border-b border-slate-800 pb-3">
                             <button type="button" @click="selectedCourse = 'IT'" 
                                     :class="selectedCourse === 'IT' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-900 text-slate-400 hover:text-white'"
-                                    class="px-5 py-2.5 rounded-xl font-bold text-xs transition border border-slate-700">
-                                💻 BS Information Technology (BSIT)
+                                    class="px-4 py-2 rounded-xl font-bold text-xs transition border border-slate-800">
+                                💻 BSIT
                             </button>
                             <button type="button" @click="selectedCourse = 'CS'" 
                                     :class="selectedCourse === 'CS' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-900 text-slate-400 hover:text-white'"
-                                    class="px-5 py-2.5 rounded-xl font-bold text-xs transition border border-slate-700">
-                                🖥️ BS Computer Science (BSCS)
+                                    class="px-4 py-2 rounded-xl font-bold text-xs transition border border-slate-800">
+                                🖥️ BSCS
                             </button>
                         </div>
 
@@ -69,7 +106,7 @@
                             <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Year Level:</span>
                             <template x-for="yr in [1, 2, 3, 4]">
                                 <button type="button" @click="selectedYear = yr.toString()" 
-                                        :class="selectedYear === yr.toString() ? 'bg-indigo-600 text-white font-bold border-indigo-500' : 'bg-slate-900 text-slate-400 border-slate-700 hover:bg-slate-800'"
+                                        :class="selectedYear === yr.toString() ? 'bg-indigo-600 text-white font-bold border-indigo-500' : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800'"
                                         class="px-3.5 py-1.5 rounded-lg text-xs border transition" x-text="yr + ' Year'"></button>
                             </template>
                         </div>
@@ -77,32 +114,32 @@
                         <!-- Search Box for Subjects -->
                         <div class="relative">
                             <input type="text" x-model="searchSubject" placeholder="Mag-search ng Subject Code o Title..." 
-                                class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-sm focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none">
+                                   class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
                         </div>
 
                         <!-- Subject Cards Grid -->
-                        <div class="max-h-64 overflow-y-auto pr-1 space-y-2.5">
+                        <div class="max-h-56 overflow-y-auto pr-1 space-y-2">
                             @foreach($subjects as $course => $courseSubjects)
                                 @foreach($courseSubjects as $subject)
                                     <div @click="selectedSubjectId = '{{ $subject->id }}'"
                                          x-show="'{{ $subject->course }}' === selectedCourse && 
                                                  '{{ $subject->year }}' === selectedYear && 
                                                  ('{{ strtolower($subject->code) . ' ' . strtolower($subject->title) }}'.includes(searchSubject.toLowerCase()))"
-                                         :class="selectedSubjectId == '{{ $subject->id }}' ? 'bg-indigo-600/30 border-indigo-500 ring-2 ring-indigo-500/50 text-white shadow-lg' : 'bg-slate-900/80 border-slate-700 text-slate-300 hover:border-slate-500'"
-                                         class="p-3.5 rounded-xl border cursor-pointer transition flex items-center justify-between text-sm">
+                                         :class="selectedSubjectId == '{{ $subject->id }}' ? 'bg-indigo-600/25 border-indigo-500 ring-1 ring-indigo-500 text-white shadow-md' : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'"
+                                         class="p-3 rounded-xl border cursor-pointer transition flex items-center justify-between text-xs">
                                         
                                         <div class="space-y-1">
                                             <div class="flex items-center space-x-2">
-                                                <span class="px-2.5 py-0.5 bg-slate-950 font-mono text-xs font-bold text-indigo-300 rounded border border-slate-800">{{ $subject->code }}</span>
-                                                <span class="font-semibold text-white">{{ $subject->title }}</span>
+                                                <span class="px-2 py-0.5 bg-slate-950 font-mono text-[11px] font-bold text-indigo-300 rounded border border-slate-800">{{ $subject->code }}</span>
+                                                <span class="font-semibold text-white text-sm">{{ $subject->title }}</span>
                                             </div>
-                                            <div class="text-xs text-slate-400">
+                                            <div class="text-[11px] text-slate-400">
                                                 Year {{ $subject->year }} • Semester {{ $subject->semester }} • {{ $subject->units }} Units
                                             </div>
                                         </div>
 
                                         <div>
-                                            <span x-show="selectedSubjectId == '{{ $subject->id }}'" class="text-indigo-400 font-bold text-xs bg-indigo-500/20 px-2.5 py-1 rounded-full border border-indigo-500/40">✓ Selected</span>
+                                            <span x-show="selectedSubjectId == '{{ $subject->id }}'" class="text-indigo-400 font-bold text-xs bg-indigo-500/20 px-2.5 py-1 rounded-full border border-indigo-500/30">✓ Napili</span>
                                         </div>
                                     </div>
                                 @endforeach
@@ -110,69 +147,71 @@
                         </div>
                     </div>
 
-                    <!-- 2. INSTRUCTOR PICKER (Organized by Academic Rank / Filter) -->
-                    <div class="space-y-4 bg-slate-900/40 p-5 rounded-2xl border border-slate-700/60">
+                    <!-- 2. INSTRUCTOR PICKER (Organized by Academic Rank / Default Slot) -->
+                    <div class="space-y-4 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
                         <div class="flex justify-between items-center">
-                            <label class="block text-base font-bold text-indigo-400">2. Pumili ng Instructor (Opsyonal)</label>
-                            <button type="button" @click="selectedInstructorId = ''" class="text-xs text-rose-400 hover:underline">I-clear / Unassigned</button>
+                            <label class="block text-sm font-bold text-indigo-400">2. Itinalagang Guro (Instructor / Default Slot)</label>
+                            <button type="button" @click="selectedInstructorId = ''" class="text-xs text-amber-400 hover:underline">I-set bilang Unassigned (Default Slot)</button>
                         </div>
                         <input type="hidden" name="instructor_id" x-model="selectedInstructorId">
 
                         <!-- Instructor Rank Filter Tabs -->
-                        <div class="flex flex-wrap gap-2 border-b border-slate-700 pb-3">
+                        <div class="flex flex-wrap gap-1.5 border-b border-slate-800 pb-3">
                             <button type="button" @click="selectedInstructorRank = 'All'" 
-                                    :class="selectedInstructorRank === 'All' ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-900 text-slate-400 hover:text-white'"
-                                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">
+                                    :class="selectedInstructorRank === 'All' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400 hover:text-white'"
+                                    class="px-3 py-1 rounded-lg text-xs font-semibold transition border border-slate-800">
                                 Lahat
                             </button>
-                            <button type="button" @click="selectedInstructorRank = 'Professor'" 
-                                    :class="selectedInstructorRank === 'Professor' ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-900 text-slate-400 hover:text-white'"
-                                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">
-                                Professor
+                            <button type="button" @click="selectedInstructorRank = 'Instructor I'" 
+                                    :class="selectedInstructorRank === 'Instructor I' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400 hover:text-white'"
+                                    class="px-3 py-1 rounded-lg text-xs font-semibold transition border border-slate-800">
+                                Instructor I
                             </button>
-                            <button type="button" @click="selectedInstructorRank = 'Associate Professor'" 
-                                    :class="selectedInstructorRank === 'Associate Professor' ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-900 text-slate-400 hover:text-white'"
-                                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">
-                                Associate Professor
+                            <button type="button" @click="selectedInstructorRank = 'Instructor II'" 
+                                    :class="selectedInstructorRank === 'Instructor II' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400 hover:text-white'"
+                                    class="px-3 py-1 rounded-lg text-xs font-semibold transition border border-slate-800">
+                                Instructor II
                             </button>
                             <button type="button" @click="selectedInstructorRank = 'Assistant Professor'" 
-                                    :class="selectedInstructorRank === 'Assistant Professor' ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-900 text-slate-400 hover:text-white'"
-                                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">
+                                    :class="selectedInstructorRank === 'Assistant Professor' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400 hover:text-white'"
+                                    class="px-3 py-1 rounded-lg text-xs font-semibold transition border border-slate-800">
                                 Assistant Professor
-                            </button>
-                            <button type="button" @click="selectedInstructorRank = 'Instructor'" 
-                                    :class="selectedInstructorRank === 'Instructor' ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-900 text-slate-400 hover:text-white'"
-                                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">
-                                Instructor
                             </button>
                         </div>
 
                         <!-- Search Box for Instructors -->
                         <div class="relative">
                             <input type="text" x-model="searchInstructor" placeholder="Mag-search ng Pangalan ng Instructor..." 
-                                class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-sm focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none">
+                                   class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-1">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-44 overflow-y-auto pr-1">
+                            <!-- Default Unassigned Slot Option -->
                             <div @click="selectedInstructorId = ''"
-                                   :class="selectedInstructorId === '' ? 'bg-indigo-600/30 border-indigo-500 text-white' : 'bg-slate-900/80 border-slate-700 text-slate-400 hover:border-slate-500'"
-                                   class="p-3 rounded-xl border cursor-pointer transition text-xs font-semibold flex items-center space-x-2 col-span-full">
+                                 :class="selectedInstructorId === '' ? 'bg-amber-500/20 border-amber-500 text-amber-200' : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'"
+                                 class="p-3 rounded-xl border cursor-pointer transition text-xs font-semibold flex items-center space-x-2 col-span-full">
                                 <span>⚠️</span>
-                                <span>Unassigned (Itatakda mamaya)</span>
+                                <div>
+                                    <span class="font-bold">Unassigned / Default Slot (Open for Hiring)</span>
+                                    <p class="text-[10px] font-normal opacity-75">Naka-setup na ang subject kahit wala pang nakatalagang guro.</p>
+                                </div>
                             </div>
 
                             @foreach($instructors as $instructor)
+                                @php
+                                    $rank = $instructor->academic_rank ?? $instructor->profession ?? 'Instructor I';
+                                @endphp
                                 <div @click="selectedInstructorId = '{{ $instructor->id }}'"
-                                     x-show="(selectedInstructorRank === 'All' || '{{ $instructor->academic_rank ?? '' }}'.includes(selectedInstructorRank)) && 
+                                     x-show="(selectedInstructorRank === 'All' || '{{ $rank }}'.includes(selectedInstructorRank)) && 
                                              ('{{ strtolower($instructor->name) }}'.includes(searchInstructor.toLowerCase()))"
-                                     :class="selectedInstructorId == '{{ $instructor->id }}' ? 'bg-indigo-600/30 border-indigo-500 text-white shadow-md' : 'bg-slate-900/80 border-slate-700 text-slate-300 hover:border-slate-500'"
-                                     class="p-3 rounded-xl border cursor-pointer transition flex items-center justify-between text-xs font-medium">
+                                     :class="selectedInstructorId == '{{ $instructor->id }}' ? 'bg-indigo-600/25 border-indigo-500 text-white shadow-sm' : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'"
+                                     class="p-3 rounded-xl border cursor-pointer transition flex items-center justify-between text-xs">
                                     <div class="space-y-0.5">
                                         <div class="font-bold text-white flex items-center space-x-1.5">
                                             <span>👨‍🏫</span>
                                             <span>{{ $instructor->name }}</span>
                                         </div>
-                                        <div class="text-slate-400 text-[11px]">Rank: {{ $instructor->academic_rank ?? 'N/A' }}</div>
+                                        <div class="text-slate-400 text-[10px]">Rank: {{ $rank }}</div>
                                     </div>
                                     <span x-show="selectedInstructorId == '{{ $instructor->id }}'" class="text-indigo-400 font-bold">✓</span>
                                 </div>
@@ -180,24 +219,24 @@
                         </div>
                     </div>
 
-                    <!-- 3. ROOM & BUILDING PICKER (Organized by Building Tabs) -->
-                    <div class="space-y-4 bg-slate-900/40 p-5 rounded-2xl border border-slate-700/60">
+                    <!-- 3. ROOM & BUILDING PICKER -->
+                    <div class="space-y-4 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
                         <div class="flex justify-between items-center">
-                            <label class="block text-base font-bold text-indigo-400">3. Pumili ng Room & Building <span class="text-rose-500">*</span></label>
+                            <label class="block text-sm font-bold text-indigo-400">3. Pumili ng Room & Building <span class="text-rose-500">*</span></label>
                         </div>
                         <input type="hidden" name="room_id" x-model="selectedRoomId" required>
 
                         <!-- Building Filter Tabs -->
-                        <div class="flex flex-wrap gap-2 border-b border-slate-700 pb-3">
+                        <div class="flex flex-wrap gap-1.5 border-b border-slate-800 pb-3">
                             <button type="button" @click="selectedBuilding = 'All'" 
-                                    :class="selectedBuilding === 'All' ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-900 text-slate-400 hover:text-white'"
-                                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">
-                                Lahat ng Building
+                                    :class="selectedBuilding === 'All' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400 hover:text-white'"
+                                    class="px-3 py-1 rounded-lg text-xs font-semibold transition border border-slate-800">
+                                Lahat
                             </button>
                             @foreach($rooms->keys() as $buildingName)
                                 <button type="button" @click="selectedBuilding = '{{ $buildingName }}'" 
-                                        :class="selectedBuilding === '{{ $buildingName }}' ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-900 text-slate-400 hover:text-white'"
-                                        class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">
+                                        :class="selectedBuilding === '{{ $buildingName }}' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400 hover:text-white'"
+                                        class="px-3 py-1 rounded-lg text-xs font-semibold transition border border-slate-800">
                                     🏢 {{ $buildingName }}
                                 </button>
                             @endforeach
@@ -206,21 +245,21 @@
                         <!-- Search Room Input -->
                         <div class="relative">
                             <input type="text" x-model="searchRoom" placeholder="Mag-search ng Room Name..." 
-                                class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-sm focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none">
+                                   class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-1">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-44 overflow-y-auto pr-1">
                             @foreach($rooms as $building => $buildingRooms)
                                 @foreach($buildingRooms as $room)
                                     <div @click="selectedRoomId = '{{ $room->id }}'"
                                          x-show="(selectedBuilding === 'All' || '{{ $room->building }}' === selectedBuilding) && 
                                                  ('{{ strtolower($room->name) . ' ' . strtolower($room->building) }}'.includes(searchRoom.toLowerCase()))"
-                                         :class="selectedRoomId == '{{ $room->id }}' ? 'bg-indigo-600/30 border-indigo-500 ring-2 ring-indigo-500/50 text-white shadow-md' : 'bg-slate-900/80 border-slate-700 text-slate-300 hover:border-slate-500'"
+                                         :class="selectedRoomId == '{{ $room->id }}' ? 'bg-indigo-600/25 border-indigo-500 ring-1 ring-indigo-500 text-white shadow-sm' : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'"
                                          class="p-3 rounded-xl border cursor-pointer transition flex items-center justify-between text-xs">
                                         
                                         <div class="space-y-0.5">
-                                            <div class="font-bold text-white text-sm">🚪 {{ $room->name }}</div>
-                                            <div class="text-slate-400">🏢 {{ $room->building }} • Capacity: {{ $room->capacity ?? 'N/A' }}</div>
+                                            <div class="font-bold text-white text-xs">🚪 {{ $room->name }}</div>
+                                            <div class="text-slate-400 text-[10px]">🏢 {{ $room->building }} • Capacity: {{ $room->capacity ?? 'N/A' }}</div>
                                         </div>
 
                                         <span x-show="selectedRoomId == '{{ $room->id }}'" class="text-indigo-400 font-bold">✓</span>
@@ -231,13 +270,13 @@
                     </div>
 
                     <!-- 4. DAY & TIME SECTION -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-900/40 p-5 rounded-2xl border border-slate-700/60">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
                         <!-- Day Select -->
                         <div>
-                            <label class="block text-sm font-bold text-indigo-400 mb-2">4. Araw (Day) <span class="text-rose-500">*</span></label>
+                            <label class="block text-xs font-bold text-indigo-400 mb-2">4. Araw (Day) <span class="text-rose-500">*</span></label>
                             <select name="day" required 
-                                class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-600 text-white text-sm focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none">
-                                <option value="" disabled selected class="text-slate-400">Pumili...</option>
+                                    class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                                <option value="" disabled selected class="text-slate-500">Pumili ng Araw...</option>
                                 @foreach(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $day)
                                     <option value="{{ $day }}" {{ old('day') == $day ? 'selected' : '' }}>{{ $day }}</option>
                                 @endforeach
@@ -246,29 +285,29 @@
 
                         <!-- Start Time -->
                         <div>
-                            <label class="block text-sm font-bold text-indigo-400 mb-2">Oras ng Simula (Start) <span class="text-rose-500">*</span></label>
+                            <label class="block text-xs font-bold text-indigo-400 mb-2">Oras ng Simula (Start) <span class="text-rose-500">*</span></label>
                             <input type="time" name="start_time" value="{{ old('start_time') }}" required 
-                                class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-600 text-white text-sm focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none [color-scheme:dark]">
+                                   class="w-full px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none [color-scheme:dark]">
                         </div>
 
                         <!-- End Time -->
                         <div>
-                            <label class="block text-sm font-bold text-indigo-400 mb-2">Oras ng Tapos (End) <span class="text-rose-500">*</span></label>
+                            <label class="block text-xs font-bold text-indigo-400 mb-2">Oras ng Tapos (End) <span class="text-rose-500">*</span></label>
                             <input type="time" name="end_time" value="{{ old('end_time') }}" required 
-                                class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-600 text-white text-sm focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none [color-scheme:dark]">
+                                   class="w-full px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none [color-scheme:dark]">
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex justify-end space-x-4 pt-4 border-t border-slate-700/60">
+                    <div class="flex justify-end space-x-3 pt-4 border-t border-slate-800">
                         <a href="{{ route('admin.schedules.index') }}" 
-                           class="px-5 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold transition">
+                           class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition">
                             Cancel
                         </a>
 
                         <button type="submit" 
-                                class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-lg shadow-indigo-600/30 transition transform hover:-translate-y-0.5">
-                            Save Schedule
+                                class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition transform hover:-translate-y-0.5">
+                            Save Schedule Record
                         </button>
                     </div>
                 </form>
